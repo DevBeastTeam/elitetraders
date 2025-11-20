@@ -79,6 +79,9 @@ class _DepositFormState extends State<DepositForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        /// --------------------------
+        /// Deposit Amount
+        /// --------------------------
         const Text(
           "Enter Deposit Amount",
           style: TextStyle(
@@ -88,6 +91,7 @@ class _DepositFormState extends State<DepositForm> {
           ),
         ),
         const SizedBox(height: 15),
+
         TextField(
           controller: amountController,
           keyboardType: TextInputType.number,
@@ -103,61 +107,30 @@ class _DepositFormState extends State<DepositForm> {
             ),
           ),
         ),
+
         const SizedBox(height: 30),
 
-        /// Middle Row: Payment Methods + Text Fields
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        /// --------------------------
+        /// Right Text Fields Only
+        /// (Payment Method Removed)
+        /// --------------------------
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            /// Left: Payment Methods
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    "Choose Payment Method",
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
-                  const SizedBox(height: 15),
-                  Wrap(
-                    spacing: 20,
-                    runSpacing: 15,
-                    children: [
-                      paymentButton(Icons.account_balance, "Bank Transfer"),
-                      paymentButton(Icons.account_balance_wallet, "E-Wallet"),
-                      paymentButton(Icons.credit_card, "Card Payment"),
-                      paymentButton(Icons.qr_code, "QR Payment"),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(width: 20),
-
-            /// Right: Text Fields
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  customTextField(dailyProfitController, "Daily Profit"),
-                  const SizedBox(height: 15),
-                  customTextField(totalProfitController, "Total Profit"),
-                  const SizedBox(height: 15),
-                  customTextField(level1Controller, "Level 1"),
-                  const SizedBox(height: 15),
-                  customTextField(level2Controller, "Level 2"),
-                  const SizedBox(height: 15),
-                  customTextField(durationController, "Duration"),
-                ],
-              ),
-            ),
+            customTextField(dailyProfitController, "Daily Profit"),
+            const SizedBox(height: 15),
+            customTextField(totalProfitController, "Total Profit"),
+            const SizedBox(height: 15),
+            customTextField(level1Controller, "Level 1"),
+            const SizedBox(height: 15),
+            customTextField(level2Controller, "Level 2"),
+            const SizedBox(height: 15),
+            customTextField(durationController, "Duration"),
           ],
         ),
 
         const SizedBox(height: 40),
 
-        /// Submit Button
         Center(child: buttonFilled("Deposit Now")),
       ],
     );
@@ -182,7 +155,7 @@ class _DepositFormState extends State<DepositForm> {
 }
 
 ///////////////////////////////////////////////////////////////////
-/// BUTTONS
+/// BUTTON
 ///////////////////////////////////////////////////////////////////
 Widget buttonFilled(String text) {
   return Container(
@@ -194,28 +167,6 @@ Widget buttonFilled(String text) {
     child: Text(
       text,
       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-    ),
-  );
-}
-
-Widget paymentButton(IconData icon, String title) {
-  return Container(
-    width: 140,
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(15),
-    ),
-    child: Column(
-      children: [
-        Icon(icon, size: 40, color: Colors.green),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ],
     ),
   );
 }

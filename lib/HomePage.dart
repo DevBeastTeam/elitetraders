@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:elitetraders/LoginPage.dart';
+import 'package:elitetraders/depositpage.dart';
+import 'package:elitetraders/withdrawpage.dart';
 
 class EliteTradersApp extends StatelessWidget {
   const EliteTradersApp({super.key});
@@ -6,357 +10,408 @@ class EliteTradersApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'EliteTraders',
       debugShowCheckedModeBanner: false,
-      home: const ResponsiveHome(),
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        scaffoldBackgroundColor: const Color(0xFF1B5E20),
+        textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
+      ),
+      home: const HomePage(),
     );
   }
 }
 
-class ResponsiveHome extends StatefulWidget {
-  const ResponsiveHome({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<ResponsiveHome> createState() => _ResponsiveHomeState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _ResponsiveHomeState extends State<ResponsiveHome> {
+class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = <Widget>[
     MainDashboard(),
     DepositPage(),
     WithdrawPage(),
-    Center(
-      child: Text("Logout Page", style: TextStyle(color: Colors.white)),
-    ),
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    /// Bottom nav logout click
     if (index == 3) {
-      Navigator.push(
+      // Logout
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginPage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    double maxWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      backgroundColor: const Color(0xff032f1b),
-
-      // -------------------------------
-      //            APP BAR
-      // -------------------------------
       appBar: AppBar(
-        backgroundColor: const Color(0xff023017),
+        backgroundColor: const Color(0xFF2E7D32),
         elevation: 0,
-        leading: const Icon(Icons.menu, color: Colors.white),
-
-        centerTitle: true,
         title: const Text(
-          "ELITETRDRS",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-
-        actions: [
-          /// WITHDRAW ICON
-          IconButton(
-            icon: const Icon(Icons.money, color: Colors.orangeAccent),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const WithdrawPage()),
-              );
-            },
+          'ELITETRDERS',
+          style: TextStyle(
+            color: Color.fromARGB(255, 247, 246, 246),
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
           ),
-
-          /// LOGOUT ICON → LOGIN PAGE
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {},
+        ),
+        actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.redAccent),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => LoginPage()),
-              );
-            },
+            icon: const Icon(Icons.settings, color: Colors.orange),
+            onPressed: () {},
           ),
         ],
       ),
-
-      body: Center(
-        child: SizedBox(
-          width: maxWidth > 600 ? 600 : maxWidth,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: _pages[_selectedIndex],
-          ),
-        ),
-      ),
-
-      // -------------------------------
-      //     BOTTOM NAVIGATION BAR
-      // -------------------------------
+      body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xff023017),
-        selectedItemColor: Colors.greenAccent,
-        unselectedItemColor: Colors.white,
+        backgroundColor: const Color(0xFF2E7D32),
         type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance),
-            label: "Account",
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'Deposit',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.savings), label: "Deposit"),
-          BottomNavigationBarItem(icon: Icon(Icons.money), label: "Withdraw"),
-          BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
+          BottomNavigationBarItem(icon: Icon(Icons.upload), label: 'Withdraw'),
+          BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
         ],
       ),
     );
   }
 }
 
-///////////////////////////////////////////////////////////////
-///  DASHBOARD
-///////////////////////////////////////////////////////////////
 class MainDashboard extends StatelessWidget {
   const MainDashboard({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        const Text(
-          "Welcome, dev",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 5),
-        const Text(
-          "Here's your account overview",
-          style: TextStyle(color: Colors.white70),
-        ),
-        const SizedBox(height: 20),
-
-        /// BALANCE CARD
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: const Color(0xff064d2c),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              const Text(
-                "Available Balance",
-                style: TextStyle(color: Colors.white70, fontSize: 16),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                "Rs 0.00",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [buttonFilled("Deposit"), buttonBorder("Withdraw")],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+  Future<void> _launchWhatsApp() async {
+    const url = "https://wa.me/923001234567";
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    }
   }
-}
-
-///////////////////////////////////////////////////////////////
-///  DEPOSIT PAGE
-///////////////////////////////////////////////////////////////
-class DepositPage extends StatelessWidget {
-  const DepositPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        const Text(
-          "Deposit Funds",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        const SizedBox(height: 20),
-
-        Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: const Color(0xff064d2c),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              const Text(
-                "Enter Amount",
-                style: TextStyle(color: Colors.white70),
-              ),
-              const SizedBox(height: 10),
-
-              TextField(
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: "Rs 0.00",
-                  hintStyle: const TextStyle(color: Colors.white54),
-                  filled: true,
-                  fillColor: const Color(0xff023017),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                keyboardType: TextInputType.number,
-              ),
-
-              const SizedBox(height: 20),
-              buttonFilled("Deposit Now"),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-///////////////////////////////////////////////////////////////
-///   WITHDRAW PAGE (FULL PROFESSIONAL PAGE)
-///////////////////////////////////////////////////////////////
-class WithdrawPage extends StatelessWidget {
-  const WithdrawPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          const SizedBox(height: 10),
+          // -------------------------------
+          // 🔥 CARD SAME AS BEFORE
+          // -------------------------------
+          Card(
+            color: const Color(0xFF2E7D32),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Text(
+                    'Welcome, dev',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Here's your account overview",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Available Balance',
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+                  const Text(
+                    'Rs 0.00',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DepositPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF388E3C),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Deposit'),
+                      ),
+                      const SizedBox(width: 20),
+                      OutlinedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const WithdrawPage(),
+                            ),
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFF388E3C)),
+                        ),
+                        child: const Text(
+                          'Withdraw',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Referred By:',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const Text('', style: TextStyle(color: Colors.green)),
+                  const SizedBox(height: 15),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1B5E20),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'https://elite-traders.pro/signup.php?ref=...',
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ),
+                        Icon(Icons.copy, color: Colors.white, size: 18),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  const Text(
+                    'Contact Us on WhatsApp',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    children: [
+                      Expanded(child: _adminContactBox('Admin-1')),
+                      const SizedBox(width: 15),
+                      Expanded(child: _adminContactBox('Admin-2')),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              Expanded(
+                child: _MenuIcon(icon: Icons.description, label: 'Plan'),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: _MenuIcon(icon: Icons.swap_horiz, label: 'Referral'),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 30),
+          Row(
+            children: [
+              Expanded(
+                child: _MenuIcon(icon: Icons.history, label: 'History'),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: _MenuIcon(
+                  icon: Icons.account_balance_wallet,
+                  label: 'Earning',
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 30),
+          Row(
+            children: const [
+              _StatCard(
+                title: 'Total Profit',
+                amount: 'Rs 0',
+                color: Colors.purple,
+              ),
+              SizedBox(width: 12),
+              _StatCard(
+                title: 'Total Deposit',
+                amount: 'Rs 0',
+                color: Colors.orange,
+              ),
+              SizedBox(width: 12),
+              _StatCard(
+                title: 'Total Withdraw',
+                amount: 'Rs 0.00',
+                color: Colors.lightGreen,
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 40),
           const Text(
-            "Withdraw Funds",
+            'Account Summary',
             style: TextStyle(
               color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
+
           const SizedBox(height: 20),
 
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            childAspectRatio: 2.5,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            children: const [
+              _SummaryCard(
+                icon: Icons.card_giftcard,
+                title: 'Referral Bonus',
+                value: 'Rs 0',
+              ),
+              _SummaryCard(
+                icon: Icons.hourglass_bottom,
+                title: 'Pending Withdraw',
+                value: 'Rs 0',
+              ),
+              _SummaryCard(
+                icon: Icons.people,
+                title: 'Team Member',
+                value: '0',
+              ),
+              _SummaryCard(
+                icon: Icons.monetization_on,
+                title: 'Team Investment',
+                value: 'Rs 0',
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 40),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16.0),
+            child: Image.asset(
+              'assets/banner.jpg',
+              fit: BoxFit.cover,
+              width: double.infinity,
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _adminContactBox(String name) {
+  return GestureDetector(
+    onTap: () async {
+      const url = "https://wa.me/923001234567";
+      if (await canLaunchUrl(Uri.parse(url))) await launchUrl(Uri.parse(url));
+    },
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2E7D32),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          const Icon(Icons.message, color: Colors.white, size: 30),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
             decoration: BoxDecoration(
-              color: const Color(0xff064d2c),
-              borderRadius: BorderRadius.circular(20),
+              color: const Color(0xFF388E3C),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Column(
-              children: [
-                const Text(
-                  "Available Balance",
-                  style: TextStyle(color: Colors.white70),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  "Rs 0.00",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Enter Withdrawal Amount",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                TextField(
-                  style: const TextStyle(color: Colors.white),
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    hintText: "Rs 0.00",
-                    hintStyle: const TextStyle(color: Colors.white54),
-                    filled: true,
-                    fillColor: const Color(0xff023017),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                Row(
-                  children: [
-                    Expanded(child: withdrawOption("JazzCash", Icons.phone)),
-                    const SizedBox(width: 10),
-                    Expanded(child: withdrawOption("EasyPaisa", Icons.wallet)),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Enter Wallet Number",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                TextField(
-                  style: const TextStyle(color: Colors.white),
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    hintText: "03XXXXXXXXX",
-                    hintStyle: const TextStyle(color: Colors.white54),
-                    filled: true,
-                    fillColor: const Color(0xff023017),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-                buttonFilled("Withdraw Now"),
-              ],
+            child: const Text(
+              "Contact",
+              style: TextStyle(color: Colors.white, fontSize: 12),
             ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _MenuIcon extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _MenuIcon({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2E7D32),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 30, color: Colors.white),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],
       ),
@@ -364,70 +419,39 @@ class WithdrawPage extends StatelessWidget {
   }
 }
 
-///////////////////////////////////////////////////////////////
-///   LOGIN PAGE (ADDED)
-///////////////////////////////////////////////////////////////
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class _StatCard extends StatelessWidget {
+  final String title;
+  final String amount;
+  final Color color;
+  const _StatCard({
+    required this.title,
+    required this.amount,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xff032f1b),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          margin: const EdgeInsets.symmetric(horizontal: 30),
-          decoration: BoxDecoration(
-            color: const Color(0xff064d2c),
-            borderRadius: BorderRadius.circular(20),
-          ),
+    return Expanded(
+      child: Card(
+        color: const Color(0xFF2E7D32),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Login",
-                style: TextStyle(
+              Icon(Icons.show_chart, color: color),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+              Text(
+                amount,
+                style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
-
-              TextField(
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  hintStyle: const TextStyle(color: Colors.white54),
-                  filled: true,
-                  fillColor: const Color(0xff023017),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              TextField(
-                obscureText: true,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: "Password",
-                  hintStyle: const TextStyle(color: Colors.white54),
-                  filled: true,
-                  fillColor: const Color(0xff023017),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 25),
-              buttonFilled("Login"),
             ],
           ),
         ),
@@ -436,105 +460,46 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-///////////////////////////////////////////////////////////////
-///  SMALL REUSABLE WIDGETS
-///////////////////////////////////////////////////////////////
-Widget buttonFilled(String text) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
-    decoration: BoxDecoration(
-      color: Colors.green,
-      borderRadius: BorderRadius.circular(30),
-    ),
-    child: Text(
-      text,
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
+class _SummaryCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String value;
+  const _SummaryCard({
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: const Color(0xFF2E7D32),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.green, size: 40),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
-Widget buttonBorder(String text) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 30),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(30),
-      border: Border.all(color: Colors.white, width: 2),
-    ),
-    child: Text(
-      text,
-      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-    ),
-  );
-}
-
-Widget withdrawOption(String title, IconData icon) {
-  return Container(
-    padding: const EdgeInsets.symmetric(vertical: 14),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Column(
-      children: [
-        Icon(icon, color: Colors.green, size: 30),
-        const SizedBox(height: 6),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-      ],
-    ),
-  );
-}
-
-Widget linkBox() {
-  return Container(
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(15),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
-        Expanded(
-          child: Text(
-            "https://elite-traders.pro/signup...",
-            style: TextStyle(fontSize: 14),
-          ),
-        ),
-        Icon(Icons.copy, color: Colors.green),
-      ],
-    ),
-  );
-}
-
-Widget adminBox(String title) {
-  return Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
-    ),
-    child: Column(
-      children: [
-        const Icon(Icons.message, color: Colors.green, size: 40),
-        const SizedBox(height: 6),
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
-          decoration: BoxDecoration(
-            color: const Color(0xff064d2c),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Text("Contact", style: TextStyle(color: Colors.white)),
-        ),
-      ],
-    ),
-  );
+    );
+  }
 }

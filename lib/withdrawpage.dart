@@ -27,7 +27,7 @@ class WithdrawPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: const Color(0xff064d2c),
+              color: const Color(0xFF2E7D32), // Green from Login
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -63,7 +63,9 @@ class WithdrawPage extends StatelessWidget {
                     hintText: "Rs 0.00",
                     hintStyle: const TextStyle(color: Colors.white54),
                     filled: true,
-                    fillColor: const Color(0xff023017),
+                    fillColor: const Color(
+                      0xFF1B5E20,
+                    ), // Darker Green from Login
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -107,7 +109,9 @@ class WithdrawPage extends StatelessWidget {
                     hintText: "03XXXXXXXXX",
                     hintStyle: const TextStyle(color: Colors.white54),
                     filled: true,
-                    fillColor: const Color(0xff023017),
+                    fillColor: const Color(
+                      0xFF1B5E20,
+                    ), // Darker Green from Login
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -154,7 +158,7 @@ Widget buttonFilled(String text) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 35),
     decoration: BoxDecoration(
-      color: Colors.green,
+      color: const Color(0xFF388E3C), // Green from Login Button
       borderRadius: BorderRadius.circular(30),
     ),
     child: Text(
