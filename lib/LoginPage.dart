@@ -21,10 +21,10 @@ class _LoginPageState extends State<LoginPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF1B5E20), // Dark Green
-              Color(0xFF2E7D32),
-              Color(0xFF388E3C),
-              Color(0xFF4CAF50),
+              Color(0xFF000033), // Dark Navy
+              Color(0xFF001a33),
+              Color(0xFF002b4d),
+              Color(0xFF003366),
             ],
           ),
         ),
@@ -96,12 +96,12 @@ class _LoginPageState extends State<LoginPage> {
                         height: 55,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF2E7D32), Color(0xFF388E3C)],
+                            colors: [Color(0xFF002b4d), Color(0xFF003366)],
                           ),
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.green.withOpacity(0.3),
+                              color: const Color(0xFF001a33).withOpacity(0.5),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                             TextSpan(
                               text: "Sign Up",
                               style: TextStyle(
-                                color: Color(0xFF2E7D32),
+                                color: Color(0xFF002b4d),
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.underline,
                               ),

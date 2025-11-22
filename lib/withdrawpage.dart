@@ -27,7 +27,7 @@ class WithdrawPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: const Color(0xFF2E7D32), // Green from Login
+              color: const Color(0xFF002b4d), // Darker Navy
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -63,9 +63,7 @@ class WithdrawPage extends StatelessWidget {
                     hintText: "Rs 0.00",
                     hintStyle: const TextStyle(color: Colors.white54),
                     filled: true,
-                    fillColor: const Color(
-                      0xFF1B5E20,
-                    ), // Darker Green from Login
+                    fillColor: const Color(0xFF001a33), // Darkest Navy
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -109,9 +107,7 @@ class WithdrawPage extends StatelessWidget {
                     hintText: "03XXXXXXXXX",
                     hintStyle: const TextStyle(color: Colors.white54),
                     filled: true,
-                    fillColor: const Color(
-                      0xFF1B5E20,
-                    ), // Darker Green from Login
+                    fillColor: const Color(0xFF001a33), // Darkest Navy
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide.none,
@@ -141,14 +137,20 @@ Widget withdrawOption(String title, IconData icon) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 14),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: const Color(0xFF002b4d), // Darker Navy
       borderRadius: BorderRadius.circular(14),
     ),
     child: Column(
       children: [
-        Icon(icon, color: Colors.green, size: 30),
+        Icon(icon, color: Colors.white, size: 30),
         const SizedBox(height: 6),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ],
     ),
   );
@@ -158,7 +160,7 @@ Widget buttonFilled(String text) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 35),
     decoration: BoxDecoration(
-      color: const Color(0xFF388E3C), // Green from Login Button
+      color: const Color(0xFF003366), // Medium Navy
       borderRadius: BorderRadius.circular(30),
     ),
     child: Text(

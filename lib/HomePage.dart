@@ -13,8 +13,8 @@ class EliteTradersApp extends StatelessWidget {
       title: 'EliteTraders',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: const Color(0xFF1B5E20),
+        primarySwatch: Colors.blue, // Not used, we override colors
+        scaffoldBackgroundColor: const Color(0xFF001a33), // Dark Navy
         textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
       home: const HomePage(),
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: const Color(0xFF002b4d), // Darker Navy
         elevation: 0,
         title: const Text(
           'ELITETRDERS',
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: const Color(0xFF002b4d), // Darker Navy
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
@@ -120,7 +120,7 @@ class MainDashboard extends StatelessWidget {
           // 🔥 CARD SAME AS BEFORE
           // -------------------------------
           Card(
-            color: const Color(0xFF2E7D32),
+            color: const Color(0xFF002b4d), // Darker Navy
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -168,7 +168,9 @@ class MainDashboard extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF388E3C),
+                          backgroundColor: const Color(
+                            0xFF003366,
+                          ), // Medium Navy
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('Deposit'),
@@ -184,7 +186,9 @@ class MainDashboard extends StatelessWidget {
                           );
                         },
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFF388E3C)),
+                          side: const BorderSide(
+                            color: Color(0xFF003366),
+                          ), // Medium Navy
                         ),
                         child: const Text(
                           'Withdraw',
@@ -198,7 +202,7 @@ class MainDashboard extends StatelessWidget {
                     'Referred By:',
                     style: TextStyle(color: Colors.grey),
                   ),
-                  const Text('', style: TextStyle(color: Colors.green)),
+                  const Text('', style: TextStyle(color: Colors.blue)),
                   const SizedBox(height: 15),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -206,7 +210,7 @@ class MainDashboard extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1B5E20),
+                      color: const Color(0xFF001a33), // Darkest Navy
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Row(
@@ -275,13 +279,13 @@ class MainDashboard extends StatelessWidget {
               _StatCard(
                 title: 'Total Profit',
                 amount: 'Rs 0',
-                color: Colors.purple,
+                color: Colors.lightBlueAccent,
               ),
               SizedBox(width: 12),
               _StatCard(
                 title: 'Total Deposit',
                 amount: 'Rs 0',
-                color: Colors.orange,
+                color: Colors.tealAccent,
               ),
               SizedBox(width: 12),
               _StatCard(
@@ -360,7 +364,7 @@ Widget _adminContactBox(String name) {
     child: Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E7D32),
+        color: const Color(0xFF002b4d), // Darker Navy
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -378,7 +382,7 @@ Widget _adminContactBox(String name) {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFF388E3C),
+              color: const Color(0xFF003366), // Medium Navy
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Text(
@@ -402,7 +406,7 @@ class _MenuIcon extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E7D32),
+        color: const Color(0xFF002b4d), // Darker Navy
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -433,7 +437,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Card(
-        color: const Color(0xFF2E7D32),
+        color: const Color(0xFF002b4d), // Darker Navy
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -473,12 +477,12 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color(0xFF2E7D32),
+      color: const Color(0xFF002b4d), // Darker Navy
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Icon(icon, color: Colors.green, size: 40),
+            Icon(icon, color: Colors.white, size: 40),
             const SizedBox(width: 15),
             Expanded(
               child: Column(

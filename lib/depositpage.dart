@@ -8,10 +8,10 @@ class DepositPage extends StatelessWidget {
     double maxWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 3, 118, 66),
+      backgroundColor: const Color(0xFF001a33), // Dark Navy
 
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 3, 125, 58),
+        backgroundColor: const Color(0xFF002b4d), // Darker Navy
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -100,7 +100,7 @@ class _DepositFormState extends State<DepositForm> {
             hintText: "Rs 0.00",
             hintStyle: const TextStyle(color: Colors.white54),
             filled: true,
-            fillColor: const Color(0xff064d2c),
+            fillColor: const Color(0xFF002b4d), // Darker Navy
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide.none,
@@ -144,7 +144,7 @@ class _DepositFormState extends State<DepositForm> {
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white54),
         filled: true,
-        fillColor: const Color(0xff064d2c),
+        fillColor: const Color(0xFF002b4d), // Darker Navy
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,
@@ -161,7 +161,7 @@ Widget buttonFilled(String text) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
     decoration: BoxDecoration(
-      color: Colors.green,
+      color: const Color(0xFF003366), // Medium Navy
       borderRadius: BorderRadius.circular(30),
     ),
     child: Text(
