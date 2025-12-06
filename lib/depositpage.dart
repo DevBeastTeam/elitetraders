@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DepositPage extends StatelessWidget {
   const DepositPage({super.key});
@@ -57,21 +59,54 @@ class DepositForm extends StatefulWidget {
 
 class _DepositFormState extends State<DepositForm> {
   final TextEditingController amountController = TextEditingController();
-  final TextEditingController dailyProfitController = TextEditingController();
-  final TextEditingController totalProfitController = TextEditingController();
-  final TextEditingController level1Controller = TextEditingController();
-  final TextEditingController level2Controller = TextEditingController();
-  final TextEditingController durationController = TextEditingController();
+  // Removed unused controllers for simplicity as per standard flow
+  // If you need them, keep them. For now, we focus on Amount + Proof/Method
+
+  bool _isLoading = false;
 
   @override
   void dispose() {
     amountController.dispose();
-    dailyProfitController.dispose();
-    totalProfitController.dispose();
-    level1Controller.dispose();
-    level2Controller.dispose();
-    durationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submitDeposit() async {
+    if (amountController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please enter amount")));
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    User? user = FirebaseAuth.instance.currentUser;
+
+    try {
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('deposits').add({
+          'userId': user.uid,
+          'amount': double.parse(amountController.text.trim()),
+          'status': 'pending',
+          'createdAt': Timestamp.now(),
+          'method': 'Manual', // Can be enhanced to select method
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Deposit Request Submitted!")),
+          );
+          Navigator.pop(context);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -110,46 +145,72 @@ class _DepositFormState extends State<DepositForm> {
 
         const SizedBox(height: 30),
 
-        /// --------------------------
-        /// Right Text Fields Only
-        /// (Payment Method Removed)
-        /// --------------------------
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            customTextField(dailyProfitController, "Daily Profit"),
-            const SizedBox(height: 15),
-            customTextField(totalProfitController, "Total Profit"),
-            const SizedBox(height: 15),
-            customTextField(level1Controller, "Level 1"),
-            const SizedBox(height: 15),
-            customTextField(level2Controller, "Level 2"),
-            const SizedBox(height: 15),
-            customTextField(durationController, "Duration"),
-          ],
+        // Instructions
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF002b4d),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Instructions:",
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "1. Send amount to Admin Account.",
+                style: TextStyle(color: Colors.white70),
+              ),
+              Text(
+                "2. Enter amount above.",
+                style: TextStyle(color: Colors.white70),
+              ),
+              Text(
+                "3. Click Deposit Now.",
+                style: TextStyle(color: Colors.white70),
+              ),
+              Text(
+                "4. Wait for approval.",
+                style: TextStyle(color: Colors.white70),
+              ),
+            ],
+          ),
         ),
 
         const SizedBox(height: 40),
 
-        Center(child: buttonFilled("Deposit Now")),
-      ],
-    );
-  }
-
-  Widget customTextField(TextEditingController controller, String hint) {
-    return TextField(
-      controller: controller,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white54),
-        filled: true,
-        fillColor: const Color(0xFF002b4d), // Darker Navy
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
+        Center(
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _isLoading ? null : _submitDeposit,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF003366), // Medium Navy
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text(
+                      "Deposit Now",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

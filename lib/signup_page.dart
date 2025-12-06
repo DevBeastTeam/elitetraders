@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:elitetraders/LoginPage.dart';
-import 'package:elitetraders/HomePage.dart' hide LoginPage;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -10,6 +11,72 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _signUp() async {
+    if (_emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // 1. Create user with email and password
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // 2. Save user data to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': user.email,
+          'phone': _phoneController.text.trim(),
+          'createdAt': Timestamp.now(),
+          'availableBalance': 0.00,
+          'totalProfit': 0.00,
+          'totalDeposit': 0.00,
+          'totalWithdraw': 0.00,
+          'referredBy': 'Admin', // Default referral
+        });
+
+        // Navigate to home page after successful signup
+        if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message ?? "An error occurred")));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +138,7 @@ class _SignupPageState extends State<SignupPage> {
                     // Email Field
                     buildTextField(
                       "Email ID",
+                      _emailController,
                       "Enter your Email",
                       Icons.email_outlined,
                     ),
@@ -79,6 +147,7 @@ class _SignupPageState extends State<SignupPage> {
                     // Phone Field
                     buildTextField(
                       "Phone Number",
+                      _phoneController,
                       "Enter your Phone Number",
                       Icons.phone_outlined,
                     ),
@@ -86,18 +155,11 @@ class _SignupPageState extends State<SignupPage> {
 
                     // Password Field
                     buildPasswordField(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
 
                     // Sign Up Button
                     GestureDetector(
-                      onTap: () {
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => const EliteTradersApp(),
-                        //   ),
-                        // );
-                      },
+                      onTap: _isLoading ? null : _signUp,
                       child: Container(
                         width: double.infinity,
                         height: 55,
@@ -114,16 +176,20 @@ class _SignupPageState extends State<SignupPage> {
                             ),
                           ],
                         ),
-                        child: const Center(
-                          child: Text(
-                            "SIGN UP",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
+                        child: Center(
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  "SIGN UP",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -168,13 +234,17 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   // Standard TextField for white background
-  Widget buildTextField(String label, String hint, IconData icon) {
+  Widget buildTextField(
+    String label,
+    TextEditingController controller,
+    String hint,
+    IconData icon,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-
           style: const TextStyle(
             color: Colors.black54,
             fontSize: 14,
@@ -183,6 +253,7 @@ class _SignupPageState extends State<SignupPage> {
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
           style: const TextStyle(color: Colors.black87),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: Colors.grey[600]),
@@ -219,6 +290,7 @@ class _SignupPageState extends State<SignupPage> {
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: _passwordController,
           obscureText: true,
           style: const TextStyle(color: Colors.black87),
           decoration: InputDecoration(
