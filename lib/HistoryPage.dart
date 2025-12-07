@@ -63,7 +63,7 @@ class TransactionList extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return Center(
             child: Text(
-              "No ${collection} found.",
+              "No $collection found.",
               style: const TextStyle(color: Colors.grey),
             ),
           );

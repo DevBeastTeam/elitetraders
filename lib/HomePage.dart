@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:elitetraders/depositpage.dart';
 import 'package:elitetraders/withdrawpage.dart';
@@ -9,7 +10,8 @@ import 'package:elitetraders/PlanPage.dart';
 import 'package:elitetraders/ReferralPage.dart';
 import 'package:elitetraders/HistoryPage.dart';
 import 'package:elitetraders/EarningPage.dart';
-import 'package:elitetraders/SettingsPage.dart';
+import 'package:elitetraders/NotificationPage.dart';
+import 'package:elitetraders/ProfilePage.dart';
 
 class EliteTradersApp extends StatelessWidget {
   const EliteTradersApp({super.key});
@@ -97,54 +99,29 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
-          // Profile Avatar
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: StreamBuilder<DocumentSnapshot>(
-              stream: user != null
-                  ? FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(user.uid)
-                        .snapshots()
-                  : null,
-              builder: (context, snapshot) {
-                var userData = snapshot.data?.data() as Map<String, dynamic>?;
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsPage(),
-                      ),
-                    );
-                  },
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: const Color(0xFF003366),
-                    backgroundImage: userData?['profileImage'] != null
-                        ? NetworkImage(userData!['profileImage'])
-                        : null,
-                    child: userData?['profileImage'] == null
-                        ? const Icon(
-                            Icons.person,
-                            size: 20,
-                            color: Colors.white,
-                          )
-                        : null,
-                  ),
-                );
-              },
-            ),
-          ),
+          // Notification Icon (Replaces Profile Avatar)
           IconButton(
-            icon: const Icon(Icons.settings, color: Colors.orange),
+            icon: const Icon(Icons.notifications, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
+                MaterialPageRoute(
+                  builder: (context) => const NotificationPage(),
+                ),
               );
             },
           ),
+          // Profile Icon (Replaces Settings Icon)
+          IconButton(
+            icon: const Icon(Icons.person, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
+            },
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       drawer: Drawer(
@@ -258,17 +235,17 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             const Divider(color: Colors.white24),
+            // Settings Item Removed
+            /*
             _buildDrawerItem(
               icon: Icons.settings,
               title: 'Settings',
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
-                );
+                // Settings nav removed
               },
             ),
+            */
             _buildDrawerItem(
               icon: Icons.help_outline,
               title: 'Help & Support',
@@ -792,8 +769,21 @@ Widget _adminContactBox(String name) {
   return Builder(
     builder: (context) {
       return GestureDetector(
-        onTap: () {
-          _showContactForm(context);
+        onTap: () async {
+          const phoneNumber =
+              "+923001234567"; // Replace with actual admin number
+          final Uri whatsappUrl = Uri.parse("https://wa.me/$phoneNumber");
+
+          if (!await launchUrl(
+            whatsappUrl,
+            mode: LaunchMode.externalApplication,
+          )) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Could not open WhatsApp")),
+              );
+            }
+          }
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
@@ -823,163 +813,13 @@ Widget _adminContactBox(String name) {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
-                  "Live Chat",
+                  "Contact with Admin",
                   style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
             ],
           ),
         ),
-      );
-    },
-  );
-}
-
-void _showContactForm(BuildContext context) {
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-
-  showDialog(
-    context: context,
-    builder: (context) {
-      bool isLoading = false;
-
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            backgroundColor: const Color(0xFF002b4d),
-            title: const Text(
-              'Contact Support',
-              style: TextStyle(color: Colors.white),
-            ),
-            content: SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Please provide your details to start chatting.',
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: nameController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.orange),
-                        ),
-                      ),
-                      validator: (v) => v!.isEmpty ? 'Required' : null,
-                    ),
-                    TextFormField(
-                      controller: emailController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.orange),
-                        ),
-                      ),
-                      validator: (v) => v!.isEmpty ? 'Required' : null,
-                    ),
-                    TextFormField(
-                      controller: phoneController,
-                      style: const TextStyle(color: Colors.white),
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.orange),
-                        ),
-                      ),
-                      validator: (v) => v!.isEmpty ? 'Required' : null,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: isLoading ? null : () => Navigator.pop(context),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                onPressed: isLoading
-                    ? null
-                    : () async {
-                        if (formKey.currentState!.validate()) {
-                          setState(() => isLoading = true);
-                          final user = FirebaseAuth.instance.currentUser;
-                          if (user != null) {
-                            try {
-                              // Send initial contact info as a message
-                              await FirebaseFirestore.instance
-                                  .collection('chats')
-                                  .add({
-                                    'userId': user.uid,
-                                    'userEmail': user.email,
-                                    'message':
-                                        '📋 Contact Request:\nName: ${nameController.text}\nEmail: ${emailController.text}\nPhone: ${phoneController.text}',
-                                    'timestamp': FieldValue.serverTimestamp(),
-                                    'isAdmin': false,
-                                  });
-                            } catch (e) {
-                              // Ignore error
-                              print("Error sending contact info: $e");
-                            }
-                          }
-
-                          if (context.mounted) {
-                            Navigator.pop(context); // Close dialog
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Request sent to Admin! We will contact you soon.',
-                                ),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                child: isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text(
-                        'Submit',
-                        style: TextStyle(color: Colors.white),
-                      ),
-              ),
-            ],
-          );
-        },
       );
     },
   );

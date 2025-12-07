@@ -6,10 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:elitetraders/HomePage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:elitetraders/main.dart';
 
 void main() {
   testWidgets('HomePage shows user info', (WidgetTester tester) async {

@@ -72,10 +72,10 @@ class AdminWithdrawalsPage extends StatelessWidget {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: DataTable(
-                          headingRowColor: MaterialStateProperty.all(
+                          headingRowColor: WidgetStateProperty.all(
                             Colors.transparent,
                           ),
-                          dataRowColor: MaterialStateProperty.all(
+                          dataRowColor: WidgetStateProperty.all(
                             Colors.transparent,
                           ),
                           columnSpacing: 30,
@@ -152,10 +152,7 @@ class AdminWithdrawalsPage extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        (data['userId'] ?? 'N/A')
-                                                .toString()
-                                                .substring(0, 8) +
-                                            '...',
+                                        '${(data['userId'] ?? 'N/A').toString().substring(0, 8)}...',
                                         style: const TextStyle(
                                           color: Colors.white70,
                                         ),

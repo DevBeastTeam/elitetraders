@@ -272,8 +272,9 @@ class _AdminChatPageState extends State<AdminChatPage> {
   }
 
   Future<void> _sendAdminMessage() async {
-    if (_messageController.text.trim().isEmpty || selectedUserId == null)
+    if (_messageController.text.trim().isEmpty || selectedUserId == null) {
       return;
+    }
 
     final message = _messageController.text.trim();
     _messageController.clear();
@@ -379,12 +380,12 @@ class _AdminChatPageState extends State<AdminChatPage> {
                                 backgroundColor: isSelected
                                     ? Colors.orange
                                     : const Color(0xFF001a33),
+                                radius: 16,
                                 child: Icon(
                                   Icons.person,
                                   color: Colors.white,
                                   size: 18,
                                 ),
-                                radius: 16,
                               ),
                               title: Text(
                                 email,

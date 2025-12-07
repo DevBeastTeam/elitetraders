@@ -11,16 +11,16 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Auto-create admin account if not exists
-  try {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: 'admin@admin.com',
-      password: '123456',
-    );
+  // try {
+  //   await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //     email: 'admin@admin.com',
+  //     password: '123456',
+  //   );
 
-    print('✅ Admin account created: admin@admin.com / 123456');
-  } catch (e) {
-    print('Admin account already exists or error: $e');
-  }
+  //   print('✅ Admin account created: admin@admin.com / 123456');
+  // } catch (e) {
+  //   print('Admin account already exists or error: $e');
+  // }
 
   runApp(const RegisterUI());
 }

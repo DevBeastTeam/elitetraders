@@ -58,6 +58,13 @@ class _SignupPageState extends State<SignupPage> {
           'totalProfit': 0.00,
           'totalDeposit': 0.00,
           'totalWithdraw': 0.00,
+          'totalReferral': 0.00,
+          'referd_by': '',
+          'referd_by_id': 'abc',
+          'image': user.photoURL,
+          'name': user.displayName,
+          'uid': user.uid,
+          'password': _passwordController.text,
           'referredBy': 'Admin', // Default referral
         });
 

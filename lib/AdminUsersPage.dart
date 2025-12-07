@@ -68,10 +68,10 @@ class AdminUsersPage extends StatelessWidget {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
-                        headingRowColor: MaterialStateProperty.all(
+                        headingRowColor: WidgetStateProperty.all(
                           Colors.transparent,
                         ),
-                        dataRowColor: MaterialStateProperty.all(
+                        dataRowColor: WidgetStateProperty.all(
                           Colors.transparent,
                         ),
                         columnSpacing: 30,
