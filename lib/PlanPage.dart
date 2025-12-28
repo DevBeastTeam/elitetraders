@@ -2,8 +2,62 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class PlanPage extends StatelessWidget {
+class PlanPage extends StatefulWidget {
   const PlanPage({super.key});
+
+  @override
+  State<PlanPage> createState() => _PlanPageState();
+}
+
+class _PlanPageState extends State<PlanPage> {
+  @override
+  void initState() {
+    super.initState();
+    _seedPlans();
+  }
+
+  Future<void> _seedPlans() async {
+    final plansRef = FirebaseFirestore.instance.collection('plans');
+    final snapshot = await plansRef.limit(1).get();
+
+    if (snapshot.docs.isEmpty) {
+      // Seed default plans if collection is empty
+      final defaultPlans = [
+        {
+          'title': "VIP 1",
+          'price': 1000,
+          'dailyProfit': 50,
+          'totalProfit': 1500,
+          'duration': 30,
+        },
+        {
+          'title': "VIP 2",
+          'price': 3000,
+          'dailyProfit': 160,
+          'totalProfit': 4800,
+          'duration': 30,
+        },
+        {
+          'title': "VIP 3",
+          'price': 5000,
+          'dailyProfit': 280,
+          'totalProfit': 8400,
+          'duration': 30,
+        },
+        {
+          'title': "VIP 4",
+          'price': 10000,
+          'dailyProfit': 600,
+          'totalProfit': 18000,
+          'duration': 30,
+        },
+      ];
+
+      for (var plan in defaultPlans) {
+        await plansRef.add(plan);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,38 +72,42 @@ class PlanPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const [
-          PlanCard(
-            title: "VIP 1",
-            price: 1000,
-            dailyProfit: 50,
-            totalProfit: 1500,
-            duration: 30,
-          ),
-          PlanCard(
-            title: "VIP 2",
-            price: 3000,
-            dailyProfit: 160,
-            totalProfit: 4800,
-            duration: 30,
-          ),
-          PlanCard(
-            title: "VIP 3",
-            price: 5000,
-            dailyProfit: 280,
-            totalProfit: 8400,
-            duration: 30,
-          ),
-          PlanCard(
-            title: "VIP 4",
-            price: 10000,
-            dailyProfit: 600,
-            totalProfit: 18000,
-            duration: 30,
-          ),
-        ],
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('plans')
+            .orderBy('price')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text(
+                "No plans available",
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          }
+
+          final plans = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: plans.length,
+            itemBuilder: (context, index) {
+              final plan = plans[index].data() as Map<String, dynamic>;
+              return PlanCard(
+                title: plan['title'] ?? 'Plan',
+                price: (plan['price'] ?? 0).toInt(),
+                dailyProfit: (plan['dailyProfit'] ?? 0).toInt(),
+                totalProfit: (plan['totalProfit'] ?? 0).toInt(),
+                duration: (plan['duration'] ?? 30).toInt(),
+              );
+            },
+          );
+        },
       ),
     );
   }

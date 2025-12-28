@@ -8,8 +8,10 @@ import 'package:elitetraders/AdminDashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // Auto-create admin account if not exists
   // Auto-create admin account if not exists
   // try {
   //   await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -19,6 +21,7 @@ void main() async {
 
   //   print('✅ Admin account created: admin@admin.com / 123456');
   // } catch (e) {
+
   //   print('Admin account already exists or error: $e');
   // }
 
@@ -53,10 +56,10 @@ class AuthWrapper extends StatelessWidget {
           );
         }
         if (snapshot.hasData) {
-          final user = snapshot.data!;
-          if (user.email == 'admin@admin.com') {
-            return const AdminDashboard();
-          }
+          // final user = snapshot.data!;
+          // if (user.email == 'admin@admin.com') {
+          //   return const AdminDashboard();
+          // }
           return const EliteTradersApp(); // User is logged in
         }
         return const LoginPage(); // User is not logged in

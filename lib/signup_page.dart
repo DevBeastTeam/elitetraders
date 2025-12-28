@@ -68,6 +68,19 @@ class _SignupPageState extends State<SignupPage> {
           'referredBy': 'Admin', // Default referral
         });
 
+        // 3. Add Welcome Notification
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('notifications')
+            .add({
+              'title': 'Welcome to EliteTraders!',
+              'body':
+                  'Your account has been created successfully. Start investing today!',
+              'type': 'welcome',
+              'timestamp': FieldValue.serverTimestamp(),
+            });
+
         // Navigate to home page after successful signup
         if (mounted) Navigator.of(context).popUntil((route) => route.isFirst);
       }

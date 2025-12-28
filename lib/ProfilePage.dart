@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       const SizedBox(height: 15),
                       Text(
-                        user?.email ?? 'User',
+                        userData?['name'] ?? user?.email ?? 'User',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -261,87 +261,131 @@ class _ProfilePageState extends State<ProfilePage> {
                       final contactController = TextEditingController();
                       final messageController = TextEditingController();
 
-                      return AlertDialog(
-                        backgroundColor: const Color(0xFF002b4d),
-                        title: const Text(
-                          "Contact Admin",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        content: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextField(
-                                controller: titleController,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                  labelText: 'Title',
-                                  labelStyle: TextStyle(color: Colors.grey),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
+                      bool isLoading = false;
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return AlertDialog(
+                            backgroundColor: const Color(0xFF002b4d),
+                            title: const Text(
+                              "Contact Admin",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            content: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    controller: titleController,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Title',
+                                      labelStyle: TextStyle(color: Colors.grey),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
+                                  const SizedBox(height: 10),
+                                  TextField(
+                                    controller: contactController,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Email / Phone Number',
+                                      labelStyle: TextStyle(color: Colors.grey),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(height: 10),
+                                  TextField(
+                                    controller: messageController,
+                                    maxLines: 3,
+                                    style: const TextStyle(color: Colors.white),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Message',
+                                      labelStyle: TextStyle(color: Colors.grey),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 10),
-                              TextField(
-                                controller: contactController,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                  labelText: 'Email / Phone Number',
-                                  labelStyle: TextStyle(color: Colors.grey),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
-                                ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () => Navigator.pop(context),
+                                child: const Text("Cancel"),
                               ),
-                              const SizedBox(height: 10),
-                              TextField(
-                                controller: messageController,
-                                maxLines: 3,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                  labelText: 'Message',
-                                  labelStyle: TextStyle(color: Colors.grey),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
-                                  ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFF002b4d),
                                 ),
+                                onPressed: isLoading
+                                    ? null
+                                    : () async {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+
+                                        // Simulate network delay
+                                        await Future.delayed(
+                                          const Duration(seconds: 2),
+                                        );
+
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                "Message sent to Admin!",
+                                              ),
+                                              backgroundColor: Colors.green,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                child: isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Color(0xFF002b4d),
+                                        ),
+                                      )
+                                    : const Text("Send"),
                               ),
                             ],
-                          ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text("Cancel"),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF002b4d),
-                            ),
-                            onPressed: () {
-                              // Here you would typically send the data to backend
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Message sent to Admin!"),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            },
-                            child: const Text("Send"),
-                          ),
-                        ],
+                          );
+                        },
                       );
                     },
                   );
@@ -457,8 +501,9 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _balanceController = TextEditingController();
   bool _isLoading = false;
   String? _profileImageUrl;
   bool _isUploadingImage = false;
@@ -480,6 +525,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         setState(() {
           _phoneController.text = doc.get('phone') ?? '';
           _nameController.text = doc.get('name') ?? '';
+          _balanceController.text =
+              (doc.data()!.containsKey('availableBalance')
+                      ? doc.get('availableBalance')
+                      : 0.0)
+                  .toString();
           if (doc.data()!.containsKey('profileImage')) {
             _profileImageUrl = doc.get('profileImage');
           }
@@ -558,6 +608,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             .update({
               'name': _nameController.text.trim(),
               'phone': _phoneController.text.trim(),
+              'availableBalance':
+                  double.tryParse(_balanceController.text.trim()) ?? 0.0,
             });
 
         if (mounted) {
@@ -660,6 +712,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _balanceController,
+              style: const TextStyle(color: Colors.white),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: InputDecoration(
+                labelText: 'Available Balance (Rs)',
+                labelStyle: const TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: const Color(0xFF002b4d),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
             const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
@@ -725,8 +794,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         );
         await user.reauthenticateWithCredential(credential);
 
-        // Update password
+        // Update password in Auth
         await user.updatePassword(_newPasswordController.text);
+
+        // Store password data in Firestore (as requested)
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'password':
+              _newPasswordController.text, // Storing for demo/admin view
+          'lastPasswordChange': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

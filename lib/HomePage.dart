@@ -705,26 +705,69 @@ class MainDashboard extends StatelessWidget {
                             : 1.0,
                         mainAxisSpacing: 15,
                         crossAxisSpacing: 15,
-                        children: const [
+                        children: [
                           _SummaryCard(
                             icon: Icons.card_giftcard,
                             title: 'Referral Bonus',
-                            value: 'Rs 0',
+                            value: 'Rs ${userData?['totalReferral'] ?? 0}',
                           ),
-                          _SummaryCard(
-                            icon: Icons.hourglass_bottom,
-                            title: 'Pending Withdraw',
-                            value: 'Rs 0',
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('withdrawals')
+                                .where('userId', isEqualTo: user?.uid)
+                                .where('status', isEqualTo: 'pending')
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              double pending = 0;
+                              if (snapshot.hasData) {
+                                for (var doc in snapshot.data!.docs) {
+                                  pending += (doc['amount'] ?? 0).toDouble();
+                                }
+                              }
+                              return _SummaryCard(
+                                icon: Icons.hourglass_bottom,
+                                title: 'Pending Withdraw',
+                                value: 'Rs $pending',
+                              );
+                            },
                           ),
-                          _SummaryCard(
-                            icon: Icons.people,
-                            title: 'Team Member',
-                            value: '0',
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .where('referredBy', isEqualTo: user?.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              int teamCount = 0;
+                              if (snapshot.hasData) {
+                                teamCount = snapshot.data!.docs.length;
+                              }
+                              return _SummaryCard(
+                                icon: Icons.people,
+                                title: 'Team Member',
+                                value: '$teamCount',
+                              );
+                            },
                           ),
-                          _SummaryCard(
-                            icon: Icons.monetization_on,
-                            title: 'Team Investment',
-                            value: 'Rs 0',
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .where('referredBy', isEqualTo: user?.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              double teamInvestment = 0;
+                              if (snapshot.hasData) {
+                                for (var doc in snapshot.data!.docs) {
+                                  var data = doc.data() as Map<String, dynamic>;
+                                  teamInvestment += (data['totalDeposit'] ?? 0)
+                                      .toDouble();
+                                }
+                              }
+                              return _SummaryCard(
+                                icon: Icons.monetization_on,
+                                title: 'Team Investment',
+                                value: 'Rs $teamInvestment',
+                              );
+                            },
                           ),
                         ],
                       ),
